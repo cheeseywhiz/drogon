@@ -57,9 +57,10 @@ std::shared_ptr<DbClient> DbClient::newSqlite3Client(
     const size_t connNum)
 {
 #if USE_SQLITE3
-    return std::make_shared<DbClientImpl>(connInfo,
-                                          connNum,
-                                          ClientType::Sqlite3);
+    std::shared_ptr<DbClient> db = \
+        std::make_shared<DbClientImpl>(connInfo, connNum, ClientType::Sqlite3);
+    db->execSqlSync("PRAGMA foreign_keys = ON");
+    return db;
 #else
     LOG_FATAL << "Sqlite3 is not supported!";
     exit(1);
